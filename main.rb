@@ -1,6 +1,7 @@
 require 'rest-client'
 require 'json'
 require 'rufus-scheduler'
+require 'cgi'
 
 # Setup a schedular
 timer = Rufus::Scheduler.new
@@ -18,7 +19,7 @@ def formatPost(post)
   author = post['author']
   url = post['url']
   preview = post['preview']['images'][0]['source']['url']
-  formatted_post = "`#{title}`, Score: `#{score}`, By `u/#{author}`, @ #{url}"
+  formatted_post = "`#{CGI.unescapeHTML(title)}`, Score: `#{score}`, By `u/#{author}`, @ #{url}"
 end
 
 # Grab the latest post, starts at 0
