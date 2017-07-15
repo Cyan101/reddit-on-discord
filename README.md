@@ -1,6 +1,7 @@
 # Reddit-On-Discord
 
-Basic Ruby-Bot to output any new posts on a subreddit to discord
+Simple discord bot built in ruby, outputs any new posts on a subreddit to a specific channel (Made for image subreddits like /r/Aww).
+Checks the [5 latest posts](https://github.com/Cyan101/reddit-on-discord/blob/master/bot.rb#L46) every [10 seconds](https://github.com/Cyan101/reddit-on-discord/blob/master/bot.rb#L44) (Change this depending on your needs)
 
 ## Installation
 
