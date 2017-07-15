@@ -25,13 +25,26 @@ end
 timer.every '10s' do
   # Get the 5 newest posts from the subreddit and parse the json into an array
   subreddit_raw = RestClient.get('http://www.reddit.com/r/nekomimi/new.json', {params: {limit: 5}})
-  newposts = JSON.parse(subreddit_raw)
-  # Get the newest post
-  latest_post = readPost(newposts, 0)
-  # Output the latest post formatted
-  latest_post['name'] == $latest ? fresh = false : fresh = true
-  next unless fresh
-  puts formatPost(latest_post)
+  new_posts = JSON.parse(subreddit_raw)
+
+  # Check for the amount of new posts
+  counter = 0
+  new_posts['data']['children'].each do |value|
+    break if value['data']['name'] == $latest
+    counter += 1
+  end
+
+  # Exit out now if the counter is empty
+  next if counter == 0
+
+  # For each new post: Grab it, Format it and Output it
+  counter.times do |i|
+    latest_post = readPost(new_posts, i)
+    puts formatPost(latest_post)
+  end
+
+  # Save the latest post's ID
+  latest_post = readPost(new_posts, 0)
   $latest = latest_post['name']
 end
 
