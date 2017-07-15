@@ -29,8 +29,13 @@ timer.every '10s' do
   # Get the newest post
   latest_post = readPost(newposts, 0)
   # Output the latest post formatted
+  latest_post['name'] == $latest ? fresh = false : fresh = true
+  next unless fresh
   puts formatPost(latest_post)
+  $latest = latest_post['name']
 end
+
+# Finding the last posted post
 
 # Start the schedular
 timer.join
