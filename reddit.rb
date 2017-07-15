@@ -2,6 +2,9 @@ require 'rest-client'
 require 'json'
 require 'rufus-scheduler'
 require 'cgi'
+# Reddit Reading File, Not actually used by the Bot.
+# Reference for making other reddit programs/tools
+
 
 # Setup a schedular
 timer = Rufus::Scheduler.new
