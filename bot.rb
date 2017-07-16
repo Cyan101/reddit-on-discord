@@ -8,7 +8,7 @@ require 'time'
 
 # Load the config var's and create the bot using them
 Config = YAML.load_file('config.yaml')
-Bot = Discordrb::Commands::CommandBot.new token: Config['bot_key'], client_id: Config['bot_id'], prefix: Config['prefix']
+Bot = Discordrb::Commands::CommandBot.new token: Config['bot_key'], client_id: Config['bot_id'], prefix: '~'
 
 puts "Loading Reddit-On-Discord v#{Config['bot_vers']}"
 puts "Invite URL: #{Bot.invite_url}"
@@ -72,6 +72,15 @@ end
 Bot.ready do |event|
   # Set the bots name from the config
   Bot.profile.username = Config['bot_name']
+end
+
+Bot.command(:eval, help_available: false) do |event, *code|
+  break unless event.user.id == Config['owner']
+  begin
+    eval code.join(' ')
+  rescue => e
+    "It didn't work :cry: sorry.... ```#{e}```"
+  end
 end
 
 # Start the Bot

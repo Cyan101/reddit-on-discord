@@ -26,6 +26,7 @@ From the Repo
   bot_id: 33------53
   bot_vers: 0.1
   channel: 2432-------216
+  owner: 141--------704
   subreddit: aww
   bot_name: /r/Aww Posts
 ```
