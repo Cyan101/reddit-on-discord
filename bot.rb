@@ -14,12 +14,12 @@ puts "Loading Reddit-On-Discord v#{Config['bot_vers']}"
 puts "Invite URL: #{Bot.invite_url}"
 
 # Return a specific post
-def readPost(post_list, id)
+def read_post(post_list, id)
   post = post_list['data']['children'][id]['data']
 end
 
 # Format and Send a post to the discord channel
-def sendPost(post)
+def send_post(post)
   title = CGI.unescapeHTML(post['title'])
   author = post['author']
   url = post['url']
@@ -49,7 +49,7 @@ timer.every '10s' do
   # Check for the amount of new posts
   counter = 0
   new_posts['data']['children'].each do |value|
-    break if value['data']['name'] == $latest
+    break if value['data']['name'] == @latest
     counter += 1
   end
 
@@ -58,13 +58,13 @@ timer.every '10s' do
 
   # For each new post: Grab it, Format it and Output it
   counter.times do |i|
-    latest_post = readPost(new_posts, i)
-    sendPost(latest_post)
+    latest_post = read_post(new_posts, i)
+    send_post(latest_post)
   end
 
   # Save the latest post's ID
-  latest_post = readPost(new_posts, 0)
-  $latest = latest_post['name']
+  latest_post = read_post(new_posts, 0)
+  @latest = latest_post['name']
 end
 
 # Start the schedular (Causes issues for some reason?!?)
