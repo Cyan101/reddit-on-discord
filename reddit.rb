@@ -20,7 +20,7 @@ def format_post(post)
   score = post['score']
   author = post['author']
   url = post['url']
-  # preview = post['preview']['images'][0]['source']['url']
+  preview = post['thumbnail']
   "`#{CGI.unescapeHTML(title)}`, Score: `#{score}`, By `u/#{author}`, @ #{url}"
 end
 
