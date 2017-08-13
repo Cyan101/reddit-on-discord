@@ -42,7 +42,8 @@ Bot.command(:reddit) do
   while @running do
 
     # Get the 5 newest posts from the subreddit and parse the json into an array
-    subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}})
+    user_agent = 'Ubuntu1604:Github/cyan101/reddit-on-discord/v0.2 by /u/Cyan101'
+    subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}}, :user_agent => user_agent)
     new_posts = JSON.parse(subreddit_raw)
 
 
