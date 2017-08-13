@@ -38,33 +38,28 @@ def send_post(post)
 end
 
 Bot.command(:reddit) do
-@running = true
-while @running do
-  # Get the 5 newest posts from the subreddit and parse the json into an array
-  subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}})
-  new_posts = JSON.parse(subreddit_raw)
+  @running = true
+  while @running do
 
-  # For each new post: Grab it, Format it and Output it
-  #counter.times do |i|
-    #latest_post = read_post(new_posts, i)
-   # send_post(latest_post)
-  #end
+    # Get the 5 newest posts from the subreddit and parse the json into an array
+    subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}})
+    new_posts = JSON.parse(subreddit_raw)
 
-  @posts_id ||= []
-  posts = []
-  5.times { |i| posts << read_post(new_posts, i)}
-  posts.each do |post|
-    send_post(post) unless @posts_id.include? post['id']
-    @posts_id << post['id']
+
+    @post_ids ||= []
+    posts = []
+    5.times { |i| posts << read_post(new_posts, i)}
+    posts.each do |post|
+      send_post(post) unless @post_ids.include? post['id']
+      @post_ids << post['id'] unless @post_ids.include? post['id']
+    end
+
+    puts '-sleep started-'
+    sleep(10)
+    puts '~sleep finished~'
   end
-  puts '-sleep started-'
-  sleep(10)
-  puts '~sleep finished~'
-end
 end
 
-# Start the schedular (Causes issues for some reason?!?)
-#timer.join
 Bot.ready do |event|
   # Set the bots name from the config
   Bot.profile.username = Config['bot_name']
