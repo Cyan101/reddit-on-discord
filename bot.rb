@@ -25,7 +25,7 @@ def send_post(post)
   url = post['url']
   time = post['created']
   link = 'https://reddit.com' + post['permalink']
-  preview = post['preview']['images'][0]['source']['url']
+  preview = post['thumbnail']
   # Create an Embed
   Bot.channel(Config['channel']).send_embed do |emb|
     emb.color = '3498db'
@@ -37,34 +37,30 @@ def send_post(post)
   end
 end
 
-# Setup a schedular
-timer = Rufus::Scheduler.new
-
-# Grab the latest post, starts at 0
-timer.every '10s' do
+Bot.command(:reddit) do
+@running = true
+while @running do
   # Get the 5 newest posts from the subreddit and parse the json into an array
   subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}})
   new_posts = JSON.parse(subreddit_raw)
 
-  # Check for the amount of new posts
-  counter = 0
-  new_posts['data']['children'].each do |value|
-    break if value['data']['name'] == @latest
-    counter += 1
-  end
-
-  # Exit out now if the counter is empty
-  next if counter == 0
-
   # For each new post: Grab it, Format it and Output it
-  counter.times do |i|
-    latest_post = read_post(new_posts, i)
-    send_post(latest_post)
-  end
+  #counter.times do |i|
+    #latest_post = read_post(new_posts, i)
+   # send_post(latest_post)
+  #end
 
-  # Save the latest post's ID
-  latest_post = read_post(new_posts, 0)
-  @latest = latest_post['name']
+  @posts_id ||= []
+  posts = []
+  5.times { |i| posts << read_post(new_posts, i)}
+  posts.each do |post|
+    send_post(post) unless @posts_id.include? post['id']
+    @posts_id << post['id']
+  end
+  puts '-sleep started-'
+  sleep(10)
+  puts '~sleep finished~'
+end
 end
 
 # Start the schedular (Causes issues for some reason?!?)
