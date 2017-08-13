@@ -26,30 +26,27 @@ end
 
 # Grab the latest post, starts at 0
 timer.every '10s' do
+
   # Get the 5 newest posts from the subreddit and parse the json into an array
-  subreddit_raw = RestClient.get('http://www.reddit.com/r/nekomimi/new.json',
-                                 params: { limit: 5 })
+  subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}})
   new_posts = JSON.parse(subreddit_raw)
 
-  # Check for the amount of new posts
-  counter = 0
-  new_posts['data']['children'].each do |value|
-    break if value['data']['name'] == @latest
-    counter += 1
+  # If its the first time running make the @post_ids hash
+  @post_ids ||= []
+  # Reset the hash of posts
+  posts = []
+  # Add the latest posts to the posts var
+  5.times { |i| posts << read_post(new_posts, i)}
+  # Send the post and save its ID if its a new post
+  posts.each do |post|
+    puts format_post(post) unless @post_ids.include? post['id']
+    @post_ids << post['id'] unless @post_ids.include? post['id']
   end
 
-  # Exit out now if the counter is empty
-  next if counter.zero?
-
-  # For each new post: Grab it, Format it and Output it
-  counter.times do |i|
-    latest_post = read_post(new_posts, i)
-    puts format_post(latest_post)
-  end
-
-  # Save the latest post's ID
-  latest_post = read_post(new_posts, 0)
-  @latest = latest_post['name']
+  # Another way to wait 10 seconds between instead of a timer
+  #puts '-sleep started-'
+  #sleep(10)
+  #puts '~sleep finished~'
 end
 
 # Start the schedular
