@@ -37,28 +37,29 @@ def send_post(post)
   end
 end
 
-Bot.command(:reddit) do
-  @running = true
-  while @running do
+# Make a timer
+timer = Rufus::Schedular.new
 
-    # Get the 5 newest posts from the subreddit and parse the json into an array
-    user_agent = 'Ubuntu1604:Github/cyan101/reddit-on-discord/v0.2 by /u/Cyan101'
-    subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}}, :user_agent => user_agent)
-    new_posts = JSON.parse(subreddit_raw)
+# Run this every 10 seconds
+timer.every '10s' do
+
+  # Get the 5 newest posts from the subreddit and parse the json into an array
+  user_agent = 'Ubuntu1604:Github/cyan101/reddit-on-discord/v0.2 by /u/Cyan101'
+  subreddit_raw = RestClient.get("http://www.reddit.com/r/#{Config['subreddit']}/new.json", {params: {limit: 5}}, :user_agent => user_agent)
+  new_posts = JSON.parse(subreddit_raw)
 
 
-    @post_ids ||= []
-    posts = []
-    5.times { |i| posts << read_post(new_posts, i)}
-    posts.each do |post|
-      send_post(post) unless @post_ids.include? post['id']
-      @post_ids << post['id'] unless @post_ids.include? post['id']
-    end
-
-    puts '-sleep started-'
-    sleep(10)
-    puts '~sleep finished~'
+  @post_ids ||= []
+  posts = []
+  5.times { |i| posts << read_post(new_posts, i)}
+  posts.each do |post|
+    send_post(post) unless @post_ids.include? post['id']
+    @post_ids << post['id'] unless @post_ids.include? post['id']
   end
+
+  puts '-sleep started-'
+  sleep(10)
+  puts '~sleep finished~'
 end
 
 Bot.ready do |event|
